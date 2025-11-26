@@ -72,14 +72,19 @@ class LowLevelCmdSender : public rclcpp::Node {
 };
 
 int main(int argc, char **argv) {
+  std::cout << "1" << std::endl;
   rclcpp::init(argc, argv);  // Initialize rclcpp
+  std::cout << "2" << std::endl;
   rclcpp::TimerBase::SharedPtr const
       timer_;  // Create a timer callback object to send cmd in time intervals
+  std::cout << "3" << std::endl;
   auto node =
       std::make_shared<LowLevelCmdSender>();  // Create a ROS2 node and make
                                               // share with
                                               // low_level_cmd_sender class
+  std::cout << "4" << std::endl;
   rclcpp::spin(node);                         // Run ROS2 node
+  std::cout << "5" << std::endl;
   rclcpp::shutdown();                         // Exit
   return 0;
 }

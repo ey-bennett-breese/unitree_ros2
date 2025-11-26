@@ -25,6 +25,7 @@ class LowLevelCmdNode : public rclcpp::Node {
   void InitLowCmd();
   void LowStateMessageHandler(unitree_go::msg::LowState::SharedPtr msg);
   void LowCmdWrite();
+  void PrintLowCmd();
   std::string queryServiceName(std::string form, std::string name);
 
   float kp_ = 60.0;
@@ -102,6 +103,24 @@ void LowLevelCmdNode::Start() {
 void LowLevelCmdNode::LowStateMessageHandler(
     const unitree_go::msg::LowState::SharedPtr msg) {
   low_state_ = *msg;
+}
+
+void LowLevelCmdNode::PrintLowCmd() {
+  std::cout << "=== Published low_cmd_ ===" << std::endl;
+  std::cout << "Head: 0x" << std::hex << (int)low_cmd_.head[0] << " 0x" 
+            << (int)low_cmd_.head[1] << std::dec << std::endl;
+  std::cout << "Level Flag: " << (int)low_cmd_.level_flag << std::endl;
+  std::cout << "GPIO: " << (int)low_cmd_.gpio << std::endl;
+  std::cout << "Motor Commands (first 12 motors):" << std::endl;
+  for (int i = 0; i < 12; i++) {
+    std::cout << "  Motor " << i << ": mode=" << (int)low_cmd_.motor_cmd[i].mode
+              << " q=" << low_cmd_.motor_cmd[i].q
+              << " dq=" << low_cmd_.motor_cmd[i].dq
+              << " kp=" << low_cmd_.motor_cmd[i].kp
+              << " kd=" << low_cmd_.motor_cmd[i].kd
+              << " tau=" << low_cmd_.motor_cmd[i].tau << std::endl;
+  }
+  std::cout << "===========================" << std::endl;
 }
 
 void LowLevelCmdNode::LowCmdWrite() {
@@ -182,16 +201,24 @@ void LowLevelCmdNode::LowCmdWrite() {
       }
     }
     get_crc(low_cmd_);  // Check motor cmd crc
+    PrintLowCmd();
     low_cmd_pub_->publish(low_cmd_);
   }
 }
 
 int main(int argc, char** argv) {
+  std::cout << "1" << std::endl;
   rclcpp::init(argc, argv);
+  std::cout << "2" << std::endl;
   auto node = std::make_shared<LowLevelCmdNode>();
+  std::cout << "3" << std::endl;
   node->Init();
+  std::cout << "4" << std::endl;
   node->Start();
+  std::cout << "5" << std::endl;
   rclcpp::spin(node);
+  std::cout << "6" << std::endl;
   rclcpp::shutdown();
+  std::cout << "7" << std::endl;
   return 0;
 }

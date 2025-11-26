@@ -25,6 +25,7 @@ set (
   unitree_hg
   unitree_api
   rclcpp
+  sensor_msgs
   std_msgs
   rosbag2_cpp
 )
@@ -35,10 +36,13 @@ find_package(unitree_go REQUIRED)
 find_package(unitree_hg REQUIRED)
 find_package(unitree_api REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+add_executable(bridge_node src/bridge_node.cpp)
+add_executable(low_level_cmd_receiver src/low_level_cmd_receiver.cpp)
 add_executable(low_level_ctrl src/low_level_ctrl.cpp src/common/motor_crc.cpp)
 add_executable(low_level_ctrl_hg src/h1-2/lowlevel/low_level_ctrl_hg.cpp src/common/motor_crc_hg.cpp)
 add_executable(g1_low_level_example src/g1/lowlevel/g1_low_level_example.cpp src/common/motor_crc_hg.cpp)
@@ -86,7 +90,8 @@ target_compile_features(b2_stand_example PRIVATE cxx_std_20)
 add_executable(b2_sport_client src/b2/b2_sport_client.cpp src/common/ros2_b2_sport_client.cpp)
 target_compile_features(b2_sport_client PRIVATE cxx_std_20)
 
-
+ament_target_dependencies(bridge_node ${DEPENDENCY_LIST})
+ament_target_dependencies(low_level_cmd_receiver ${DEPENDENCY_LIST})
 ament_target_dependencies(low_level_ctrl ${DEPENDENCY_LIST})
 ament_target_dependencies(low_level_ctrl_hg ${DEPENDENCY_LIST})
 ament_target_dependencies(g1_low_level_example ${DEPENDENCY_LIST})
@@ -127,7 +132,9 @@ if(yaml-cpp_FOUND)
     endif()
 endif()
 
-install(TARGETS 
+install(TARGETS
+        bridge_node
+        low_level_cmd_receiver
         low_level_ctrl
         low_level_ctrl_hg
         g1_low_level_example
