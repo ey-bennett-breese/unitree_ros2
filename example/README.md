@@ -24,6 +24,7 @@ Click play. The action graph in go2.usd should spin up the /joint_command and /j
 In terminal 1:
 ```bash
 cd ~/unitree_ros2/examples
+colcon build
 source ~/unitree_ros2/setup_default.sh
 ./install/unitree_ros2_example/bridge_node
 ```
